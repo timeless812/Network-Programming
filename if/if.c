@@ -24,10 +24,10 @@ int main(int argc, char const *argv[])
 
 	name_index = if_nameindex();	
 	for (;name_index->if_name;name_index++, index++) {
-		printf("index = %d, name = %s\n", 
+		printf("index: %d, name: %s\n", 
 			name_index->if_index, name_index->if_name);
 	}
-	name_index -= index;	
+	name_index -= index;
 	if_freenameindex(name_index);
 
 	return 0;
