@@ -9,36 +9,41 @@ int main(int argc, char const *argv[])
 	struct ifreq ifr = {0};
 	char *name = "lo";
 	int fd;
+
+	unsigned char *mac;
+	unsigned char *ip;
+	int mtu;
+
+	char *up;
+	char *broadcast;
+	char *loopback;
 	
 	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
+	
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 
-	printf("name: %s\n", name);
-
+	/* get interface parameters */
 	ioctl(fd, SIOCGIFHWADDR, &ifr);
-
-	unsigned char *mac = (unsigned char *)ifr.ifr_hwaddr.sa_data;
-	printf("mac: %02x:%02x:%02x:%02x:%02x:%02x\n", 
-		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	mac = (unsigned char *)ifr.ifr_hwaddr.sa_data;
 
 	ioctl(fd, SIOCGIFADDR, &ifr);
-
-	unsigned char *ip = (unsigned char*)ifr.ifr_addr.sa_data;
-	printf("ip: %hhu.%hhu.%hhu.%hhu\n",
-		ip[0+2], ip[1+2], ip[2+2], ip[3+2]);
+	ip = (unsigned char*)ifr.ifr_addr.sa_data;
 
 	ioctl(fd, SIOCGIFMTU, &ifr);
-	
-	int mtu = ifr.ifr_mtu;
-	printf("mtu: %d\n", mtu);
+	mtu = ifr.ifr_mtu;
 
 	ioctl(fd, SIOCGIFFLAGS, &ifr);
+	up = (ifr.ifr_flags&IFF_UP)?"UP ":"";
+	broadcast = (ifr.ifr_flags&IFF_BROADCAST)?"BROADCAST ":"";
+	loopback = (ifr.ifr_flags&IFF_LOOPBACK)?"LOOPBACK":"";
 
-	char *up = (ifr.ifr_flags&IFF_UP)?"UP ":"";
-	char *broadcast = (ifr.ifr_flags&IFF_BROADCAST)?"BROADCAST ":"";
-	char *loopback = (ifr.ifr_flags&IFF_LOOPBACK)?"LOOPBACK":"";
-
-	printf("flags: <%s%s%s>", up, broadcast, loopback);
+	printf("name: %s\n", name);
+	printf("mac: %02x:%02x:%02x:%02x:%02x:%02x\n", 
+		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	printf("ip: %hhu.%hhu.%hhu.%hhu\n",
+		ip[0+2], ip[1+2], ip[2+2], ip[3+2]);
+	printf("mtu: %d\n", mtu);
+	printf("flags: <%s%s%s>\n", up, broadcast, loopback);
 
 	return 0;
 }
