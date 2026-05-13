@@ -42,12 +42,12 @@ int main(int argc, char const *argv[])
 	}
 
 	/* and delete this route */
-	// if (ioctl(fd, SIOCDELRT, &rt) == -1) {
-	//     perror("ioctl SIOCDELRT failed");
-	// }
-	// else {
-	//     printf("route deleted successfully.\n");
-	// }
+	if (ioctl(fd, SIOCDELRT, &rt) == -1) {
+	    perror("ioctl SIOCDELRT failed");
+	}
+	else {
+	    printf("route deleted successfully.\n");
+	}
 
 	close(fd);
 
